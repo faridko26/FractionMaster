@@ -14,8 +14,8 @@
 
         html,
         body {
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%;
+            overflow-y: auto;
         }
 
         body {
@@ -382,6 +382,66 @@
         input[type="number"] {
             -moz-appearance: textfield;
             appearance: textfield;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 5px;
+                text-align: center;
+            }
+
+            .header-text {
+                text-align: center;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .measurement-input {
+                gap: 5px;
+                justify-content: space-between;
+            }
+
+            .input-group span {
+                font-size: 0.8rem;
+            }
+
+            select,
+            input[type="number"] {
+                padding: 10px 5px;
+                font-size: 1rem;
+            }
+
+            #feet,
+            #inches {
+                width: 60px;
+            }
+
+            .fraction-select {
+                width: 80px;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .quick-btns {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .quick-btn {
+                width: 100%;
+                font-size: 0.9rem;
+                padding: 12px 5px;
+            }
         }
     </style>
 </head>
