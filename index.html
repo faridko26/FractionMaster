@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FractionMaster</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .logo {
+            width: 70px;
+            height: auto;
+        }
+
+        .header-text h1 {
+            color: #ecf0f1;
+            font-size: 1.6rem;
+            margin: 0;
+        }
+
+        .header-text .subtitle {
+            color: #95a5a6;
+            font-size: 0.95rem;
+        }
+
+        .calculator {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .left-panel,
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .display {
+            background: #1a252f;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .expression {
+            color: #7f8c8d;
+            font-size: 1rem;
+            min-height: 24px;
+            word-wrap: break-word;
+        }
+
+        .result {
+            color: #2ecc71;
+            font-size: 2rem;
+            font-weight: bold;
+            min-height: 40px;
+        }
+
+        .result-decimal {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .input-section label {
+            display: block;
+            color: #34495e;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .measurement-input {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-group span {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 4px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        select {
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .fraction-select {
+            width: 90px;
+        }
+
+        #feet,
+        #inches {
+            width: 80px;
+        }
+
+        .buttons-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .operator-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .operator-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: #3498db;
+            color: #fff;
+        }
+
+        .operator-btn:hover {
+            background: #2980b9;
+        }
+
+        .operator-btn.active {
+            background: #e74c3c;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 15px 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .add-btn {
+            background: #2ecc71;
+            color: #fff;
+        }
+
+        .add-btn:hover {
+            background: #27ae60;
+        }
+
+        .delete-btn {
+            background: #e67e22;
+            color: #fff;
+        }
+
+        .delete-btn:hover {
+            background: #d35400;
+        }
+
+        .clear-btn {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .clear-btn:hover {
+            background: #c0392b;
+        }
+
+        .equals-btn {
+            background: #9b59b6;
+            color: #fff;
+        }
+
+        .equals-btn:hover {
+            background: #8e44ad;
+        }
+
+        .section-title {
+            color: #34495e;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .quick-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .quick-btn {
+            padding: 10px 14px;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .quick-btn:hover {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .converter-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .converter-box h4 {
+            color: #34495e;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .conversion-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .conversion-input input {
+            flex: 1;
+            width: auto;
+            padding: 10px;
+            font-size: 1rem;
+        }
+
+        .conversion-input .convert-btn {
+            padding: 10px 15px;
+            font-size: 1rem;
+        }
+
+        .conversion-result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #fff;
+            border-radius: 6px;
+            color: #2ecc71;
+            font-weight: 600;
+            font-size: 1.1rem;
+            min-height: 30px;
+        }
+
+        .history-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            flex: 1;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .history-header h4 {
+            color: #34495e;
+            font-size: 1.1rem;
+        }
+
+        .clear-history {
+            font-size: 0.9rem;
+            color: #e74c3c;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .history-list {
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            padding: 8px 10px;
+            background: #fff;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            font-size: 1rem;
+            color: #34495e;
+        }
+
+        .converters-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .fraction-slash {
+            font-size: 1.5rem;
+            color: #34495e;
+        }
+
+        .footer {
+            text-align: center;
+            color: #95a5a6;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="orgnize_it_logo-v1-400x451.png" alt="Organize It Logo" class="logo">
+            <div class="header-text">
+                <h1>FractionMaster</h1>
+                <p class="subtitle">Fractional Inch Calculator</p>
+            </div>
+        </div>
+
+        <div class="calculator">
+            <div class="main-layout">
+                <div class="left-panel">
+                    <div class="display">
+                        <div class="expression" id="expression"></div>
+                        <div class="result" id="result">0"</div>
+                        <div class="result-decimal" id="resultDecimal"></div>
+                    </div>
+
+                    <div class="input-section">
+                        <label>Enter Measurement:</label>
+                        <div class="measurement-input">
+                            <div class="input-group">
+                                <span>Feet</span>
+                                <select id="feet">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <span>Inches</span>
+                                <select id="inches">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                    <option value="11">11</option>
+                                    <option value="12">12</option>
+                                    <option value="13">13</option>
+                                    <option value="14">14</option>
+                                    <option value="15">15</option>
+                                    <option value="16">16</option>
+                                    <option value="17">17</option>
+                                    <option value="18">18</option>
+                                    <option value="19">19</option>
+                                    <option value="20">20</option>
+                                    <option value="21">21</option>
+                                    <option value="22">22</option>
+                                    <option value="23">23</option>
+                                    <option value="24">24</option>
+                                    <option value="25">25</option>
+                                    <option value="26">26</option>
+                                    <option value="27">27</option>
+                                    <option value="28">28</option>
+                                    <option value="29">29</option>
+                                    <option value="30">30</option>
+                                    <option value="31">31</option>
+                                    <option value="32">32</option>
+                                    <option value="33">33</option>
+                                    <option value="34">34</option>
+                                    <option value="35">35</option>
+                                    <option value="36">36</option>
+                                    <option value="37">37</option>
+                                    <option value="38">38</option>
+                                    <option value="39">39</option>
+                                    <option value="40">40</option>
+                                    <option value="41">41</option>
+                                    <option value="42">42</option>
+                                    <option value="43">43</option>
+                                    <option value="44">44</option>
+                                    <option value="45">45</option>
+                                    <option value="46">46</option>
+                                    <option value="47">47</option>
+                                    <option value="48">48</option>
+                                    <option value="49">49</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <span>Fraction</span>
+                                <select id="fraction" class="fraction-select">
+                                    <option value="0">0</option>
+                                    <option value="0.0625">1/16</option>
+                                    <option value="0.125">1/8</option>
+                                    <option value="0.1875">3/16</option>
+                                    <option value="0.25">1/4</option>
+                                    <option value="0.3125">5/16</option>
+                                    <option value="0.375">3/8</option>
+                                    <option value="0.4375">7/16</option>
+                                    <option value="0.5">1/2</option>
+                                    <option value="0.5625">9/16</option>
+                                    <option value="0.625">5/8</option>
+                                    <option value="0.6875">11/16</option>
+                                    <option value="0.75">3/4</option>
+                                    <option value="0.8125">13/16</option>
+                                    <option value="0.875">7/8</option>
+                                    <option value="0.9375">15/16</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="operator-buttons">
+                        <button class="operator-btn" data-op="+" onclick="setOperator('+', this)">+</button>
+                        <button class="operator-btn" data-op="-" onclick="setOperator('−', this)">−</button>
+                        <button class="operator-btn" data-op="*" onclick="setOperator('×', this)">×</button>
+                        <button class="operator-btn" data-op="/" onclick="setOperator('÷', this)">÷</button>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn add-btn" onclick="addToExpression()">Add</button>
+                        <button class="action-btn delete-btn" onclick="deleteLast()">Delete</button>
+                        <button class="action-btn clear-btn" onclick="clearAll()">Clear</button>
+                        <button class="action-btn equals-btn" onclick="calculate()">=</button>
+                    </div>
+
+                    <div>
+                        <div class="section-title">Quick Add:</div>
+                        <div class="quick-btns">
+                            <button class="quick-btn" onclick="quickAdd(0.0625)">1/16"</button>
+                            <button class="quick-btn" onclick="quickAdd(0.125)">1/8"</button>
+                            <button class="quick-btn" onclick="quickAdd(0.25)">1/4"</button>
+                            <button class="quick-btn" onclick="quickAdd(0.5)">1/2"</button>
+                            <button class="quick-btn" onclick="quickAdd(0.625)">5/8"</button>
+                            <button class="quick-btn" onclick="quickAdd(0.75)">3/4"</button>
+                            <button class="quick-btn" onclick="quickAdd(0.875)">7/8"</button>
+                            <button class="quick-btn" onclick="quickAdd(1.5)">1-1/2"</button>
+                            <button class="quick-btn" onclick="quickAdd(3.5)">3-1/2"</button>
+                            <button class="quick-btn" onclick="quickAdd(11.25)">11-1/4"</button>
+                            <button class="quick-btn" onclick="quickAdd(23.25)">23-1/4"</button>
+                            <button class="quick-btn" onclick="quickAdd(35.25)">35-1/4"</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-panel">
+                    <div class="converter-box">
+                        <h4>Decimal to Fraction:</h4>
+                        <div class="conversion-input">
+                            <input type="number" id="decimalInput" step="0.001" placeholder="Decimal">
+                            <button class="action-btn add-btn convert-btn" onclick="convertDecimal()">Convert</button>
+                        </div>
+                        <div class="conversion-result" id="conversionResult"></div>
+                    </div>
+
+                    <div class="converter-box">
+                        <h4>Fraction to Decimal:</h4>
+                        <div class="conversion-input">
+                            <input type="number" id="numerator" placeholder="Num" style="width: 70px;">
+                            <span class="fraction-slash">/</span>
+                            <input type="number" id="denominator" placeholder="Den" style="width: 70px;">
+                            <button class="action-btn add-btn convert-btn" onclick="convertFraction()">Convert</button>
+                        </div>
+                        <div class="conversion-result" id="fractionResult"></div>
+                    </div>
+
+                    <div class="history-box">
+                        <div class="history-header">
+                            <h4>History</h4>
+                            <button class="clear-history" onclick="clearHistory()">Clear</button>
+                        </div>
+                        <div class="history-list" id="historyList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">Designed & built by Farid</div>
+    </div>
+
+    <script>
+        let expression = [];
+        let currentOperator = '+';
+        let history = [];
+
+        const fractions = [
+            { decimal: 0, display: '0' },
+            { decimal: 1 / 32, display: '1/32' },
+            { decimal: 1 / 16, display: '1/16' },
+            { decimal: 3 / 32, display: '3/32' },
+            { decimal: 1 / 8, display: '1/8' },
+            { decimal: 5 / 32, display: '5/32' },
+            { decimal: 3 / 16, display: '3/16' },
+            { decimal: 7 / 32, display: '7/32' },
+            { decimal: 1 / 4, display: '1/4' },
+            { decimal: 9 / 32, display: '9/32' },
+            { decimal: 5 / 16, display: '5/16' },
+            { decimal: 11 / 32, display: '11/32' },
+            { decimal: 3 / 8, display: '3/8' },
+            { decimal: 13 / 32, display: '13/32' },
+            { decimal: 7 / 16, display: '7/16' },
+            { decimal: 15 / 32, display: '15/32' },
+            { decimal: 1 / 2, display: '1/2' },
+            { decimal: 17 / 32, display: '17/32' },
+            { decimal: 9 / 16, display: '9/16' },
+            { decimal: 19 / 32, display: '19/32' },
+            { decimal: 5 / 8, display: '5/8' },
+            { decimal: 21 / 32, display: '21/32' },
+            { decimal: 11 / 16, display: '11/16' },
+            { decimal: 23 / 32, display: '23/32' },
+            { decimal: 3 / 4, display: '3/4' },
+            { decimal: 25 / 32, display: '25/32' },
+            { decimal: 13 / 16, display: '13/16' },
+            { decimal: 27 / 32, display: '27/32' },
+            { decimal: 7 / 8, display: '7/8' },
+            { decimal: 29 / 32, display: '29/32' },
+            { decimal: 15 / 16, display: '15/16' },
+            { decimal: 31 / 32, display: '31/32' },
+            { decimal: 1, display: '1' }
+        ];
+
+        function getCurrentValue() {
+            const feet = parseFloat(document.getElementById('feet').value) || 0;
+            const inches = parseFloat(document.getElementById('inches').value) || 0;
+            const fraction = parseFloat(document.getElementById('fraction').value) || 0;
+            return (feet * 12) + inches + fraction;
+        }
+
+        function setOperator(op, btn) {
+            currentOperator = op;
+            document.querySelectorAll('.operator-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // If there's a current value, add it to expression first
+            const currentValue = getCurrentValue();
+            if (currentValue !== 0 || expression.length > 0) {
+                if (currentValue !== 0) {
+                    if (expression.length > 0 && typeof expression[expression.length - 1] === 'number') {
+                        expression.push(op);
+                    }
+                    expression.push(currentValue);
+                    resetInputs();
+                }
+                // Show pending operator in display
+                updateDisplayWithOperator(op);
+            }
+        }
+
+        function updateDisplayWithOperator(pendingOp) {
+            let displayStr = '';
+            for (let i = 0; i < expression.length; i++) {
+                if (typeof expression[i] === 'number') {
+                    displayStr += formatMeasurement(expression[i]);
+                } else {
+                    displayStr += ' ' + expression[i] + ' ';
+                }
+            }
+            if (expression.length > 0 && typeof expression[expression.length - 1] === 'number') {
+                displayStr += ' ' + pendingOp + ' ';
+            }
+            document.getElementById('expression').textContent = displayStr;
+        }
+
+        function decimalToFraction(decimal) {
+            if (decimal < 0) {
+                return '-' + decimalToFraction(-decimal);
+            }
+
+            const wholeInches = Math.floor(decimal);
+            const fractionalPart = decimal - wholeInches;
+
+            let closestFraction = fractions[0];
+            let minDiff = Math.abs(fractionalPart - fractions[0].decimal);
+
+            for (const frac of fractions) {
+                const diff = Math.abs(fractionalPart - frac.decimal);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestFraction = frac;
+                }
+            }
+
+            let displayInches = wholeInches;
+            let displayFraction = closestFraction.display;
+
+            if (closestFraction.decimal === 1) {
+                displayInches += 1;
+                displayFraction = '0';
+            }
+
+            if (displayInches > 0 && displayFraction !== '0') {
+                return displayInches + '-' + displayFraction + '"';
+            } else if (displayInches > 0) {
+                return displayInches + '"';
+            } else if (displayFraction !== '0') {
+                return displayFraction + '"';
+            } else {
+                return '0"';
+            }
+        }
+
+        function formatMeasurement(value) {
+            return decimalToFraction(value);
+        }
+
+        function addToExpression() {
+            const value = getCurrentValue();
+            if (value === 0 && expression.length === 0) return;
+
+            if (expression.length > 0) {
+                expression.push(currentOperator);
+            }
+            expression.push(value);
+
+            updateDisplay();
+            resetInputs();
+        }
+
+        function quickAdd(value) {
+            if (expression.length > 0) {
+                expression.push(currentOperator);
+            }
+            expression.push(value);
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            let displayStr = '';
+            for (let i = 0; i < expression.length; i++) {
+                if (typeof expression[i] === 'number') {
+                    displayStr += formatMeasurement(expression[i]);
+                } else {
+                    displayStr += ' ' + expression[i] + ' ';
+                }
+            }
+            document.getElementById('expression').textContent = displayStr;
+        }
+
+        function resetInputs() {
+            document.getElementById('feet').value = '0';
+            document.getElementById('inches').value = '0';
+            document.getElementById('fraction').value = '0';
+        }
+
+        function calculate() {
+            if (expression.length === 0) {
+                const value = getCurrentValue();
+                if (value !== 0) {
+                    expression.push(value);
+                } else {
+                    return;
+                }
+            }
+
+            const currentValue = getCurrentValue();
+            if (currentValue !== 0 && expression.length > 0 && typeof expression[expression.length - 1] === 'number') {
+                expression.push(currentOperator);
+                expression.push(currentValue);
+                updateDisplay();
+            }
+
+            let result = evaluateExpression([...expression]);
+
+            const expressionStr = document.getElementById('expression').textContent;
+            const resultStr = formatMeasurement(result);
+
+            document.getElementById('result').textContent = resultStr;
+            document.getElementById('resultDecimal').textContent = `(${result.toFixed(4)}" decimal)`;
+
+            if (expressionStr) {
+                history.unshift(`${expressionStr} = ${resultStr}`);
+                if (history.length > 10) history.pop();
+                updateHistory();
+            }
+
+            expression = [result];
+            updateDisplay();
+            resetInputs();
+        }
+
+        function evaluateExpression(expr) {
+            let i = 0;
+            while (i < expr.length) {
+                if (expr[i] === '×' || expr[i] === '÷') {
+                    const left = expr[i - 1];
+                    const right = expr[i + 1];
+                    let result;
+                    if (expr[i] === '×') {
+                        result = left * right;
+                    } else {
+                        result = right !== 0 ? left / right : 0;
+                    }
+                    expr.splice(i - 1, 3, result);
+                } else {
+                    i++;
+                }
+            }
+
+            let result = expr[0];
+            for (let i = 1; i < expr.length; i += 2) {
+                const operator = expr[i];
+                const operand = expr[i + 1];
+                if (operator === '+') {
+                    result += operand;
+                } else if (operator === '−' || operator === '-') {
+                    result -= operand;
+                }
+            }
+
+            return result;
+        }
+
+        function deleteLast() {
+            if (expression.length > 0) {
+                expression.pop();
+                // If we removed an operator, also remove the trailing operator display
+                if (expression.length > 0 && typeof expression[expression.length - 1] === 'string') {
+                    expression.pop();
+                }
+                updateDisplay();
+                if (expression.length === 0) {
+                    document.getElementById('result').textContent = '0"';
+                    document.getElementById('resultDecimal').textContent = '';
+                }
+            }
+        }
+
+        function clearAll() {
+            expression = [];
+            resetInputs();
+            document.getElementById('expression').textContent = '';
+            document.getElementById('result').textContent = '0"';
+            document.getElementById('resultDecimal').textContent = '';
+            document.querySelectorAll('.operator-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('[data-op="+"]').classList.add('active');
+            currentOperator = '+';
+        }
+
+        function updateHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = history.map(item =>
+                `<div class="history-item">${item}</div>`
+            ).join('');
+        }
+
+        function clearHistory() {
+            history = [];
+            updateHistory();
+        }
+
+        function convertDecimal() {
+            const decimal = parseFloat(document.getElementById('decimalInput').value);
+            if (isNaN(decimal)) {
+                document.getElementById('conversionResult').textContent = 'Enter a valid number';
+                return;
+            }
+            const fraction = formatMeasurement(decimal);
+            document.getElementById('conversionResult').textContent = `${decimal}" = ${fraction}`;
+        }
+
+        function convertFraction() {
+            const numerator = parseFloat(document.getElementById('numerator').value);
+            const denominator = parseFloat(document.getElementById('denominator').value);
+            if (isNaN(numerator) || isNaN(denominator)) {
+                document.getElementById('fractionResult').textContent = 'Enter valid numbers';
+                return;
+            }
+            if (denominator === 0) {
+                document.getElementById('fractionResult').textContent = 'Cannot divide by zero';
+                return;
+            }
+            const decimal = numerator / denominator;
+            document.getElementById('fractionResult').textContent = `${numerator}/${denominator}" = ${decimal.toFixed(4)}"`;
+        }
+
+        document.querySelector('[data-op="+"]').classList.add('active');
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
+</body>
+
+</html>
