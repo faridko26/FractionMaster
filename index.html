@@ -444,6 +444,49 @@
                 padding: 12px 5px;
             }
         }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .num-btn {
+            padding: 15px;
+            background: #f1f2f6;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #2c3e50;
+            transition: background 0.2s;
+        }
+
+        .num-btn:hover {
+            background: #dfe4ea;
+        }
+
+        .num-btn:active {
+            background: #ced6e0;
+        }
+
+        .num-btn.backspace-btn {
+            color: #e67e22;
+        }
+
+        /* Mobile adjustments for numpad */
+        @media (max-width: 768px) {
+            .numpad {
+                gap: 8px;
+            }
+
+            .num-btn {
+                padding: 12px;
+                font-size: 1.2rem;
+            }
+        }
     </style>
 </head>
 
@@ -499,6 +542,21 @@
                                 </select>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="numpad">
+                        <button class="num-btn" onclick="numpadPress('7')">7</button>
+                        <button class="num-btn" onclick="numpadPress('8')">8</button>
+                        <button class="num-btn" onclick="numpadPress('9')">9</button>
+                        <button class="num-btn" onclick="numpadPress('4')">4</button>
+                        <button class="num-btn" onclick="numpadPress('5')">5</button>
+                        <button class="num-btn" onclick="numpadPress('6')">6</button>
+                        <button class="num-btn" onclick="numpadPress('1')">1</button>
+                        <button class="num-btn" onclick="numpadPress('2')">2</button>
+                        <button class="num-btn" onclick="numpadPress('3')">3</button>
+                        <button class="num-btn" onclick="numpadPress('.')">.</button>
+                        <button class="num-btn" onclick="numpadPress('0')">0</button>
+                        <button class="num-btn backspace-btn" onclick="numpadDelete()">⌫</button>
                     </div>
 
                     <div class="operator-buttons">
@@ -800,6 +858,66 @@
             return result;
         }
 
+        // Keypad Logic
+        let activeInputId = 'inches'; // Default to inches
+
+        function setupKeypad() {
+            // Add focus listeners to inputs
+            ['feet', 'inches'].forEach(id => {
+                const el = document.getElementById(id);
+                el.addEventListener('focus', () => {
+                    activeInputId = id;
+                    highlightActiveInput();
+                });
+
+                // Clicking the input selects it. If it's 0, we're ready to type.
+                // If it has value, the user might want to append or clear.
+                // We'll leave append behavior but ensure it's easy to clear.
+
+                el.setAttribute('inputmode', 'none');
+            });
+            highlightActiveInput();
+        }
+
+        function highlightActiveInput() {
+            document.querySelectorAll('.input-group input').forEach(el => {
+                el.style.borderColor = '#bdc3c7';
+                el.style.boxShadow = 'none';
+            });
+            const active = document.getElementById(activeInputId);
+            if (active) {
+                active.style.borderColor = '#3498db';
+                active.style.boxShadow = '0 0 5px rgba(52, 152, 219, 0.5)';
+            }
+        }
+
+        function numpadPress(num) {
+            const el = document.getElementById(activeInputId);
+            if (!el) return;
+
+            if (el.value === '0' && num !== '.') {
+                el.value = num;
+            } else {
+                el.value += num;
+            }
+        }
+
+        function numpadDelete() {
+            const el = document.getElementById(activeInputId);
+            if (!el) return;
+            el.value = el.value.slice(0, -1);
+            if (el.value === '') el.value = '0';
+        }
+
+        function numpadClear() {
+            const el = document.getElementById(activeInputId);
+            if (!el) return;
+            el.value = '0';
+        }
+
+        // Initialize Keypad
+        document.addEventListener('DOMContentLoaded', setupKeypad);
+
         function deleteLast() {
             if (expression.length > 0) {
                 expression.pop();
@@ -824,6 +942,8 @@
             document.querySelectorAll('.operator-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector('[data-op="+"]').classList.add('active');
             currentOperator = '+';
+            activeInputId = 'inches'; // Reset active to inches
+            highlightActiveInput();
         }
 
         function updateHistory() {
