@@ -128,41 +128,31 @@
             margin-bottom: 4px;
         }
 
-        input[type="number"] {
-            width: 80px;
+        /* Shared styles for inputs and selects in the measurement section */
+        .measurement-input input,
+        .measurement-input select {
+            width: 100px;
             padding: 12px;
             border: 2px solid #bdc3c7;
             border-radius: 8px;
             font-size: 1.1rem;
             text-align: center;
-        }
-
-        input[type="number"]:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        select {
-            padding: 12px;
-            border: 2px solid #bdc3c7;
-            border-radius: 8px;
-            font-size: 1.1rem;
             background: #fff;
-            cursor: pointer;
+            color: #2c3e50;
         }
 
-        select:focus {
+        .measurement-input input:focus,
+        .measurement-input select:focus {
             outline: none;
             border-color: #3498db;
         }
 
-        .fraction-select {
-            width: 90px;
-        }
-
+        /* Remove old specific selectors to avoid conflicts */
+        .fraction-select,
         #feet,
         #inches {
-            width: 80px;
+            width: 100px;
+            /* Ensure uniform width */
         }
 
         .buttons-row {
@@ -514,11 +504,11 @@
                         <div class="measurement-input">
                             <div class="input-group">
                                 <span>Feet</span>
-                                <input type="number" id="feet" value="0" min="0">
+                                <input type="text" id="feet" value="0" inputmode="none" autocomplete="off">
                             </div>
                             <div class="input-group">
                                 <span>Inches</span>
-                                <input type="number" id="inches" value="0" min="0">
+                                <input type="text" id="inches" value="0" inputmode="none" autocomplete="off">
                             </div>
                             <div class="input-group">
                                 <span>Fraction</span>
@@ -611,6 +601,15 @@
                             <button class="action-btn add-btn convert-btn" onclick="convertFraction()">Convert</button>
                         </div>
                         <div class="conversion-result" id="fractionResult"></div>
+                    </div>
+
+                    <div class="converter-box">
+                        <h4>Inch to Millimeter:</h4>
+                        <div class="conversion-input">
+                            <input type="number" id="inchInput" step="0.001" placeholder="Inches">
+                            <button class="action-btn add-btn convert-btn" onclick="convertInchToMm()">Convert</button>
+                        </div>
+                        <div class="conversion-result" id="mmResult"></div>
                     </div>
 
                     <div class="history-box">
@@ -737,6 +736,52 @@
             }
 
             if (displayInches > 0 && displayFraction !== '0') {
+                return `${displayDecimal}" (${displayFraction}")`;
+            } else {
+                return '0"';
+            }
+        }
+
+        function formatMeasurement(value) {
+            // Keep up to 4 decimal places, strip trailing zeros
+            let decimalVal = parseFloat(value.toFixed(4));
+
+            // Get fraction part for display
+            let fractional = decimalToFractionOnly(value);
+
+            if (fractional && fractional !== '0"') {
+                return `${decimalVal}" (${fractional})`;
+            }
+            return `${decimalVal}"`;
+        }
+
+        // Helper to get just the fraction string part 
+        function decimalToFractionOnly(decimal) {
+            if (decimal < 0) return '-' + decimalToFractionOnly(-decimal);
+
+            const wholeInches = Math.floor(decimal);
+            const fractionalPart = decimal - wholeInches;
+
+            let closestFraction = fractions[0];
+            let minDiff = Math.abs(fractionalPart - fractions[0].decimal);
+
+            for (const frac of fractions) {
+                const diff = Math.abs(fractionalPart - frac.decimal);
+                if (diff < minDiff) { // Use a small epsilon if needed, but simple diff works for standard
+                    minDiff = diff;
+                    closestFraction = frac;
+                }
+            }
+
+            let displayInches = wholeInches;
+            let displayFraction = closestFraction.display;
+
+            if (closestFraction.decimal === 1) {
+                displayInches += 1;
+                displayFraction = '0';
+            }
+
+            if (displayInches > 0 && displayFraction !== '0') {
                 return displayInches + '-' + displayFraction + '"';
             } else if (displayInches > 0) {
                 return displayInches + '"';
@@ -745,10 +790,6 @@
             } else {
                 return '0"';
             }
-        }
-
-        function formatMeasurement(value) {
-            return decimalToFraction(value);
         }
 
         function addToExpression() {
@@ -810,13 +851,21 @@
             let result = evaluateExpression([...expression]);
 
             const expressionStr = document.getElementById('expression').textContent;
-            const resultStr = formatMeasurement(result);
 
-            document.getElementById('result').textContent = resultStr;
-            document.getElementById('resultDecimal').textContent = `(${result.toFixed(4)}" decimal)`;
+            // Format Result: Decimal primary, Fraction secondary
+            const resultDecimal = parseFloat(result.toFixed(4));
+            const resultFraction = decimalToFractionOnly(result);
+
+            let resultDisplay = `${resultDecimal}"`;
+            if (resultFraction && resultFraction !== '0"' && resultFraction !== resultDecimal + '"') {
+                resultDisplay += ` (${resultFraction})`;
+            }
+
+            document.getElementById('result').textContent = resultDisplay;
+            document.getElementById('resultDecimal').textContent = ''; // Cleared as it's now in main result
 
             if (expressionStr) {
-                history.unshift(`${expressionStr} = ${resultStr}`);
+                history.unshift(`${expressionStr} = ${resultDisplay}`);
                 if (history.length > 10) history.pop();
                 updateHistory();
             }
@@ -894,6 +943,8 @@
         function numpadPress(num) {
             const el = document.getElementById(activeInputId);
             if (!el) return;
+
+            if (num === '.' && el.value.includes('.')) return;
 
             if (el.value === '0' && num !== '.') {
                 el.value = num;
@@ -981,6 +1032,18 @@
             }
             const decimal = numerator / denominator;
             document.getElementById('fractionResult').textContent = `${numerator}/${denominator}" = ${decimal.toFixed(4)}"`;
+        }
+
+        function convertInchToMm() {
+            const inch = parseFloat(document.getElementById('inchInput').value);
+            if (isNaN(inch)) {
+                document.getElementById('mmResult').textContent = 'Enter a valid number';
+                return;
+            }
+            const mm = inch * 25.4;
+            // Format to reasonable decimal places, e.g., 2
+            const mmDisplay = parseFloat(mm.toFixed(2));
+            document.getElementById('mmResult').textContent = `${inch}" = ${mmDisplay} mm`;
         }
 
         document.querySelector('[data-op="+"]').classList.add('active');
